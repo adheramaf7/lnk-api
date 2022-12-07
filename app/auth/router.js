@@ -7,6 +7,7 @@ const controller = require('./controller');
 
 passport.use(new LocalStrategy({ usernameField: 'email' }, controller.localStrategy));
 
+router.post('/register', multer().none(), controller.register);
 router.post('/login', multer().none(), controller.login);
 router.post('/logout', controller.logout);
 
