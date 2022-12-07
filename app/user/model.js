@@ -13,7 +13,7 @@ const modelSchema = Schema(
       maxlength: [255, 'Panjang nama harus antara 3 - 255 karakter'],
       minlength: [3, 'Panjang nama harus antara 3 - 255 karakter'],
     },
-    customer_id: {
+    user_id: {
       type: Number,
     },
     email: {
@@ -25,11 +25,6 @@ const modelSchema = Schema(
       type: String,
       required: [true, 'Password harus diisi'],
       maxlength: [255, 'Panjang password maksimal 255 karakter'],
-    },
-    role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
     },
     token: [String],
   },

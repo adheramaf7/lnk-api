@@ -1,4 +1,5 @@
 const User = require('../user/model');
+const LoginHistory = require('../login-histories/model');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -37,9 +38,13 @@ async function login(req, res, next) {
 
     await User.findOneAndUpdate({ _id: user._id }, { $push: { token: signed } }, { new: true });
 
+    const loginHistory = new LoginHistory({ user: user._id, token: signed });
+    await loginHistory.save();
+
     return res.json({
       message: 'logged in successfully',
       user: user,
+      session: loginHistory,
       token: signed,
     });
   })(req, res, next);
@@ -59,7 +64,9 @@ async function me(req, res, next) {
 async function logout(req, res, next) {
   let token = getToken(req);
   let user = await User.findOneAndUpdate({ token: { $in: [token] } }, { $pull: { token } }, { useFindAndModify: false });
-  if (!user || !token) {
+  let loginHistory = await LoginHistory.findOneAndUpdate({ token: token }, { logoutAt: Date.now() }, { useFindAndModify: false });
+
+  if (!user || !token || !loginHistory) {
     return res.json({
       error: 1,
       message: 'No user found',
