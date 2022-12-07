@@ -8,7 +8,7 @@ const { getToken } = require('../utils/get-token');
 
 async function localStrategy(email, password, done) {
   try {
-    let user = await User.findOne({ email }).select('-__v -createdAt -updatedAt -token');
+    let user = await User.findOne({ email }).select('-__v -createdAt -updatedAt -token -loginHistories');
 
     if (!user) {
       return done();
@@ -36,10 +36,10 @@ async function login(req, res, next) {
 
     let signed = jwt.sign(user, config.secretKey);
 
-    await User.findOneAndUpdate({ _id: user._id }, { $push: { token: signed } }, { new: true });
-
     const loginHistory = new LoginHistory({ user: user._id, token: signed });
     await loginHistory.save();
+
+    await User.findOneAndUpdate({ _id: user._id }, { $push: { token: signed, loginHistories: loginHistory._id } }, { new: true });
 
     return res.json({
       message: 'logged in successfully',

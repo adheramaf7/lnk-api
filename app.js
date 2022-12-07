@@ -8,6 +8,7 @@ const cors = require('cors');
 const { decodeToken } = require('./app/auth/middleware');
 
 const authRouter = require('./app/auth/router');
+const userRouter = require('./app/user/router');
 
 var app = express();
 
@@ -24,6 +25,7 @@ app.use(cors());
 app.use(decodeToken());
 
 app.use('/auth', authRouter);
+app.use('/api', userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

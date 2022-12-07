@@ -27,6 +27,12 @@ const modelSchema = Schema(
       maxlength: [255, 'Panjang password maksimal 255 karakter'],
     },
     token: [String],
+    loginHistories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'LoginHistory',
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -57,6 +63,6 @@ modelSchema.pre('save', function (next) {
   next();
 });
 
-modelSchema.plugin(AutoIncrement, { inc_field: 'customer_id' });
+modelSchema.plugin(AutoIncrement, { inc_field: 'user_id' });
 
 module.exports = model('User', modelSchema);
